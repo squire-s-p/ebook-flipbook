@@ -1,16 +1,13 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Flipbook Viewer</title>
 
-  <!-- jQuery -->
+  <!-- CDN versions instead of local -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-  <!-- Turn.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-
-  <!-- PDF.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
   <style>
@@ -75,12 +72,18 @@
         container.appendChild(el);
       }
 
-      // Initialize turn.js after all pages are added
-      $('#flipbook').turn({
-        width: 800,
-        height: 600,
-        autoCenter: true
-      });
+      // Turn.js activation
+      setTimeout(() => {
+        if (typeof $('#flipbook').turn === 'function') {
+          $('#flipbook').turn({
+            width: 800,
+            height: 600,
+            autoCenter: true
+          });
+        } else {
+          console.error("Turn.js is not initialized.");
+        }
+      }, 300);
     }
 
     loadPDF();
