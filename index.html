@@ -3,90 +3,76 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Flipbook Viewer</title>
+  <title>Book Flip</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- CDN versions instead of local -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/4.1.0/turn.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/stpageflip@2.0.6/css/stpageflip.min.css" />
 
   <style>
     body {
       margin: 0;
-      background: #eee;
+      background: #f2f2f2;
       font-family: sans-serif;
     }
 
+    #book-container {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     #flipbook {
-      width: 800px;
-      height: 600px;
-      margin: 40px auto;
+      width: 90%;
+      max-width: 1000px;
+      height: 90vh;
     }
 
-    .page {
-      width: 400px;
-      height: 600px;
-      background: white;
-      box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-    }
-
-    canvas {
-      width: 100% !important;
-      height: auto !important;
-      display: block;
+    .page-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
+  <div id="book-container">
+    <div id="flipbook"></div>
+  </div>
 
-  <div id="flipbook"></div>
-
+  <script src="https://cdn.jsdelivr.net/npm/stpageflip@2.0.6/dist/stpageflip.min.js"></script>
   <script>
-    const url = "Ebook.pdf";
+    document.addEventListener("DOMContentLoaded", function () {
+      const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+        width: 500,
+        height: 700,
+        size: "stretch",
+        minWidth: 315,
+        maxWidth: 1000,
+        minHeight: 420,
+        maxHeight: 1350,
+        maxShadowOpacity: 0.5,
+        showCover: false,
+        mobileScrollSupport: true
+      });
 
-    const container = document.getElementById("flipbook");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js";
+      const pages = [
+        "page-1.jpg",
+        "page-2.jpg",
+        "page-3.jpg",
+        "page-4.jpg",
+        "page-5.jpg",
+        "page-6.jpg",
+        "page-7.jpg",
+        "page-8.jpg",
+        "page-9.jpg",
+        "page-10.jpg"
+      ];
 
-    async function loadPDF() {
-      const pdf = await pdfjsLib.getDocument(url).promise;
-      const pageElements = [];
-
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const viewport = page.getViewport({ scale: 1.5 });
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-
-        await page.render({ canvasContext: context, viewport }).promise;
-
-        const wrapper = document.createElement("div");
-        wrapper.className = "page";
-        wrapper.appendChild(canvas);
-        pageElements.push(wrapper);
-      }
-
-      for (const el of pageElements) {
-        container.appendChild(el);
-      }
-
-      // Turn.js activation
-      setTimeout(() => {
-        if (typeof $('#flipbook').turn === 'function') {
-          $('#flipbook').turn({
-            width: 800,
-            height: 600,
-            autoCenter: true
-          });
-        } else {
-          console.error("Turn.js is not initialized.");
-        }
-      }, 300);
-    }
-
-    loadPDF();
+      pageFlip.loadFromImages(pages);
+    });
   </script>
 </body>
 </html>
